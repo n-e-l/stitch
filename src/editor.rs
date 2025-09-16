@@ -75,7 +75,7 @@ impl egui_dock::TabViewer for TabViewer {
                             // Graphics contents
                             let (response, painter) = ui.allocate_painter(vec2(500.0, 500.0), Sense::empty());
                             let start = Pos2::new(50.0, 100.0);
-                            let end = Pos2::new(200.0, 100.0);
+                            let end = self.scene_pointer.to_pos2();
                             let stroke = Stroke::new(2.0, Color32::BLUE);
                             painter.line_segment([start, end], stroke);
                             

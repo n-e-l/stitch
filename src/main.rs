@@ -1,4 +1,5 @@
 mod editor;
+mod document;
 
 use std::sync::{Arc, Mutex};
 use ash::vk::{Image, ImageView};
