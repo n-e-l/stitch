@@ -5,6 +5,10 @@ pub struct Line {
     pub b: Vec2,
 }
 
+pub trait DocumentVisitor {
+    fn visit(&self, line: &Line);
+}
+
 pub struct Document {
     lines: Vec<Line>
 }
@@ -22,10 +26,14 @@ impl Document {
         }
     }
 
-    pub fn visit<T>( &self, visitor :T)
-    where T: Fn(&Line){
+    pub fn size(&self ) -> Vec2 {
+        vec2(500.0, 500.0)
+    }
+
+    pub fn visit( &self, visitor: &dyn DocumentVisitor)
+    {
         for line in self.lines.iter() {
-            visitor(line);
+            visitor.visit(line);
         }
     }
 }
