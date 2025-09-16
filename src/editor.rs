@@ -6,7 +6,7 @@ use cen::app::gui::{GuiComponent, GuiSystem};
 use cen::graphics::Renderer;
 use cen::graphics::renderer::{RenderComponent, RenderContext};
 use cen::vulkan::{Buffer, CommandBuffer, ComputePipeline, DescriptorSetLayout, Image};
-use egui::{ImageSize, ImageSource, Pos2, Rect, Scene, TextureId, Vec2, Widget};
+use egui::{vec2, Color32, ImageSize, ImageSource, Pos2, Rect, Scene, Sense, Stroke, TextureId, Vec2, Widget};
 use egui::load::SizedTexture;
 use egui_dock::{DockArea, DockState, NodeIndex, Style};
 use gpu_allocator::MemoryLocation;
@@ -22,7 +22,7 @@ pub struct Editor {
 impl Editor {
     pub(crate) fn new() -> Self {
 
-        let mut tree = DockState::new(vec!["view".to_owned(), "extra".to_owned()]);
+        let mut tree = DockState::new(vec!["view".to_owned()]);
 
         let [a, b] =
             tree.main_surface_mut()
@@ -39,8 +39,7 @@ impl Editor {
 
 struct TabViewer {
     scene_rect: Rect,
-    image_pointer: Vec2,
-    compute: bool
+    scene_pointer: Vec2,
 }
 
 impl egui_dock::TabViewer for TabViewer {
@@ -58,7 +57,7 @@ impl egui_dock::TabViewer for TabViewer {
                     // Read where we are on the image
                     let frame_rect = ui.min_rect();
                     let mouse_frame_pos = p - frame_rect.min;
-                    self.image_pointer = mouse_frame_pos / frame_rect.size() * self.scene_rect.size() + self.scene_rect.min.to_vec2();
+                    self.scene_pointer = mouse_frame_pos / frame_rect.size() * self.scene_rect.size() + self.scene_rect.min.to_vec2();
                 }
             });
 
@@ -72,8 +71,15 @@ impl egui_dock::TabViewer for TabViewer {
                     let mut inner_rect = Rect::NAN;
                     let response = scene
                         .show(ui, &mut self.scene_rect, |ui| {
-                            ui.label("yo");
-                            inner_rect = ui.min_rect();
+                            
+                            // Graphics contents
+                            let (response, painter) = ui.allocate_painter(vec2(500.0, 500.0), Sense::empty());
+                            let start = Pos2::new(50.0, 100.0);
+                            let end = Pos2::new(200.0, 100.0);
+                            let stroke = Stroke::new(2.0, Color32::BLUE);
+                            painter.line_segment([start, end], stroke);
+                            
+                            inner_rect = painter.clip_rect();
                         })
                         .response;
 
@@ -90,8 +96,7 @@ impl GuiComponent for Editor {
     fn initialize_gui(&mut self, gui: &mut GuiSystem) {
         self.tab_viewer = Some(TabViewer {
             scene_rect: Rect::ZERO,
-            image_pointer: Default::default(),
-            compute: false
+            scene_pointer: Default::default(),
         });
     }
 
