@@ -21,7 +21,7 @@ impl Editor {
 
         let mut tree = DockState::new(vec!["view".to_owned()]);
 
-        let [a, b] =
+        let [_, _] =
             tree.main_surface_mut()
                 .split_left(NodeIndex::root(), 0.3, vec!["tools".to_owned()]);
 
@@ -71,7 +71,7 @@ impl egui_dock::TabViewer for TabViewer {
                         .show(ui, &mut self.scene_rect, |ui| {
                             
                             // Graphics contents
-                            let (response, painter) = ui.allocate_painter(vec2(500.0, 500.0), Sense::empty());
+                            let (_, painter) = ui.allocate_painter(vec2(500.0, 500.0), Sense::empty());
                             self.document.visit(|l: &Line| {
                                 let start = egui::Pos2::new(l.a.x, l.a.y);
                                 let end = egui::Pos2::new(l.b.x, l.b.y);
@@ -93,7 +93,7 @@ impl egui_dock::TabViewer for TabViewer {
 
 
 impl GuiComponent for Editor {
-    fn initialize_gui(&mut self, gui: &mut GuiSystem) {
+    fn initialize_gui(&mut self, _: &mut GuiSystem) {
         self.tab_viewer = Some(TabViewer {
             document: Document::new(),
             scene_rect: Rect::ZERO,
@@ -101,7 +101,7 @@ impl GuiComponent for Editor {
         });
     }
 
-    fn gui(&mut self, gui: &GuiSystem, context: &egui::Context) {
+    fn gui(&mut self, _: &GuiSystem, context: &egui::Context) {
         DockArea::new(&mut self.tree)
             .style(Style::from_egui(context.style().as_ref()))
             .show(context, self.tab_viewer.as_mut().unwrap());
@@ -148,6 +148,6 @@ impl RenderComponent for Editor {
 
     }
 
-    fn render(&mut self, ctx: &mut RenderContext) {
+    fn render(&mut self, _: &mut RenderContext) {
     }
 }
