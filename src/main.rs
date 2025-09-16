@@ -1,5 +1,6 @@
 mod editor;
 mod document;
+mod renderer;
 
 use std::sync::{Arc, Mutex};
 use cen::app::App;
