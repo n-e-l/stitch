@@ -15,4 +15,4 @@ egui = "0.32.0"
 egui_dock = "0.17"
 image = { version = "0.25", features = ["png"] }
 bytemuck = "1.21.0"
-vsvg = "0.5.0"
+vsvg = { git = "https://github.com/n-e-l/vsvg" }
