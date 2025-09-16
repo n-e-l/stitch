@@ -1,15 +1,12 @@
 use std::collections::HashMap;
-use ash::vk::{AccessFlags, BufferImageCopy, BufferUsageFlags, DescriptorSet, DescriptorSetLayoutBinding, DescriptorType, DeviceSize, ImageLayout, ImageUsageFlags, ImageView, PipelineStageFlags, PushConstantRange, Sampler, ShaderStageFlags, WriteDescriptorSet};
+use ash::vk::{DescriptorSetLayoutBinding, DescriptorType, PushConstantRange, ShaderStageFlags};
 use bytemuck::{Pod, Zeroable};
 use cen::app::gui::{GuiComponent, GuiSystem};
 use cen::graphics::Renderer;
 use cen::graphics::renderer::{RenderComponent, RenderContext};
-use cen::vulkan::{Buffer, CommandBuffer, ComputePipeline, DescriptorSetLayout, Image};
-use egui::{vec2, Color32, ImageSize, ImageSource, Pos2, Rect, Scene, Sense, Stroke, TextureId, Vec2, Widget};
-use egui::load::SizedTexture;
+use cen::vulkan::{ComputePipeline, DescriptorSetLayout};
+use egui::{vec2, Color32, Rect, Scene, Sense, Stroke, Vec2};
 use egui_dock::{DockArea, DockState, NodeIndex, Style};
-use gpu_allocator::MemoryLocation;
-use image::{EncodableLayout, GenericImageView};
 use crate::document::{Document, Line};
 
 pub struct Editor {

@@ -2,13 +2,11 @@ mod editor;
 mod document;
 
 use std::sync::{Arc, Mutex};
-use ash::vk::{Image, ImageView};
 use cen::app::App;
 use cen::app::app::AppConfig;
 use cen::app::gui::{GuiComponent, GuiSystem};
 use cen::graphics::Renderer;
 use cen::graphics::renderer::{RenderComponent, RenderContext};
-use cen::vulkan::CommandBuffer;
 use dotenv::dotenv;
 use crate::editor::Editor;
 
