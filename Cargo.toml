@@ -9,11 +9,8 @@ edition = "2021"
 glam = "0.30.5"
 dotenv = "0.15.0"
 cen = { git = "https://github.com/n-e-l/cen", rev = "dadf4c46361a38bd9c0c26d87b31f1d168cff213" }
-#cen = "0.0.6"
 ash = "0.38.0"
-gpu-allocator = { version = "0.27.0" }
 egui = "0.32.0"
 egui_dock = "0.17"
-image = { version = "0.25", features = ["png"] }
 bytemuck = "1.21.0"
 vsvg = { git = "https://github.com/n-e-l/vsvg" }
