@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use ash::vk;
 use ash::vk::{AccessFlags, BufferImageCopy, BufferUsageFlags, DescriptorSet, DescriptorSetLayoutBinding, DescriptorType, DeviceSize, ImageLayout, ImageUsageFlags, ImageView, PipelineStageFlags, PushConstantRange, Sampler, ShaderStageFlags, WriteDescriptorSet};
 use bytemuck::{Pod, Zeroable};
 use cen::app::gui::{GuiComponent, GuiSystem};
@@ -11,6 +10,7 @@ use egui::load::SizedTexture;
 use egui_dock::{DockArea, DockState, NodeIndex, Style};
 use gpu_allocator::MemoryLocation;
 use image::{EncodableLayout, GenericImageView};
+use crate::document::{Document, Line};
 
 pub struct Editor {
     pub tree: DockState<String>,
@@ -40,6 +40,7 @@ impl Editor {
 struct TabViewer {
     scene_rect: Rect,
     scene_pointer: Vec2,
+    document: Document
 }
 
 impl egui_dock::TabViewer for TabViewer {
@@ -74,11 +75,13 @@ impl egui_dock::TabViewer for TabViewer {
                             
                             // Graphics contents
                             let (response, painter) = ui.allocate_painter(vec2(500.0, 500.0), Sense::empty());
-                            let start = Pos2::new(50.0, 100.0);
-                            let end = self.scene_pointer.to_pos2();
-                            let stroke = Stroke::new(2.0, Color32::BLUE);
-                            painter.line_segment([start, end], stroke);
-                            
+                            self.document.visit(|l: &Line| {
+                                let start = egui::Pos2::new(l.a.x, l.a.y);
+                                let end = egui::Pos2::new(l.b.x, l.b.y);
+                                let stroke = Stroke::new(2.0, Color32::BLUE);
+                                painter.line_segment([start, end], stroke);
+                            });
+
                             inner_rect = painter.clip_rect();
                         })
                         .response;
@@ -95,6 +98,7 @@ impl egui_dock::TabViewer for TabViewer {
 impl GuiComponent for Editor {
     fn initialize_gui(&mut self, gui: &mut GuiSystem) {
         self.tab_viewer = Some(TabViewer {
+            document: Document::new(),
             scene_rect: Rect::ZERO,
             scene_pointer: Default::default(),
         });
