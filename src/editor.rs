@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use ash::vk::{DescriptorSetLayoutBinding, DescriptorType, PushConstantRange, ShaderStageFlags};
 use bytemuck::{Pod, Zeroable};
+use cen::app::engine::InitContext;
 use cen::app::gui::{GuiComponent, GuiSystem};
 use cen::graphics::Renderer;
 use cen::graphics::renderer::{RenderComponent, RenderContext};
@@ -12,13 +13,13 @@ use crate::renderer::DocumentRenderer;
 
 pub struct Editor {
     pub tree: DockState<String>,
-    tab_viewer: Option<TabViewer>,
-    pipeline: Option<ComputePipeline>,
-    layout: Option<DescriptorSetLayout>
+    tab_viewer: TabViewer,
+    pipeline: ComputePipeline,
+    layout: DescriptorSetLayout
 }
 
 impl Editor {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(ctx: &mut InitContext) -> Self {
 
         let mut tree = DockState::new(vec!["view".to_owned()]);
 
@@ -26,11 +27,45 @@ impl Editor {
             tree.main_surface_mut()
                 .split_left(NodeIndex::root(), 0.3, vec!["tools".to_owned()]);
 
+        let tab_viewer = TabViewer {
+            document: Document::new(),
+            scene_rect: Rect::ZERO,
+            scene_pointer: Default::default(),
+        };
+
+        // Initialize shader
+        let bindings = [
+            DescriptorSetLayoutBinding::default()
+                .binding(0)
+                .descriptor_count(1)
+                .descriptor_type(DescriptorType::STORAGE_IMAGE)
+                .stage_flags(ShaderStageFlags::COMPUTE)
+        ];
+
+        let layout = DescriptorSetLayout::new_push_descriptor(
+            &ctx.device,
+            &bindings
+        );
+
+        let push_constants = PushConstantRange::default()
+            .size(size_of::<PushConstants>() as u32)
+            .stage_flags(ShaderStageFlags::COMPUTE)
+            .offset(0);
+
+        let macros: HashMap<String, String> = HashMap::new();
+        let pipeline = ComputePipeline::new(
+            &ctx.device,
+            "shaders/brush.comp".parse().unwrap(),
+            &[layout.clone()],
+            &[push_constants],
+            &macros
+        ).unwrap();
+
         Self {
             tree,
-            pipeline: None,
-            tab_viewer: None,
-            layout: None
+            pipeline,
+            tab_viewer,
+            layout
         }
     }
 }
@@ -89,18 +124,10 @@ impl egui_dock::TabViewer for TabViewer {
 
 
 impl GuiComponent for Editor {
-    fn initialize_gui(&mut self, _: &mut GuiSystem) {
-        self.tab_viewer = Some(TabViewer {
-            document: Document::new(),
-            scene_rect: Rect::ZERO,
-            scene_pointer: Default::default(),
-        });
-    }
-
     fn gui(&mut self, _: &GuiSystem, context: &egui::Context) {
         DockArea::new(&mut self.tree)
             .style(Style::from_egui(context.style().as_ref()))
-            .show(context, self.tab_viewer.as_mut().unwrap());
+            .show(context, &mut self.tab_viewer);
     }
 }
 
@@ -111,39 +138,6 @@ struct PushConstants {
 }
 
 impl RenderComponent for Editor {
-    fn initialize(&mut self, renderer: &mut Renderer) {
-
-        // Initialize shader
-        let bindings = [
-            DescriptorSetLayoutBinding::default()
-                .binding(0)
-                .descriptor_count(1)
-                .descriptor_type(DescriptorType::STORAGE_IMAGE)
-                .stage_flags(ShaderStageFlags::COMPUTE)
-        ];
-
-        let layout = DescriptorSetLayout::new_push_descriptor(
-            &renderer.device,
-            &bindings
-        );
-
-        let push_constants = PushConstantRange::default()
-            .size(size_of::<PushConstants>() as u32)
-            .stage_flags(ShaderStageFlags::COMPUTE)
-            .offset(0);
-
-        let macros: HashMap<String, String> = HashMap::new();
-        self.pipeline = Some(ComputePipeline::new(
-            &renderer.device,
-            "shaders/brush.comp".parse().unwrap(),
-            &[layout.clone()],
-            &[push_constants],
-            &macros
-        ).unwrap());
-        self.layout = Some(layout);
-
-    }
-
     fn render(&mut self, _: &mut RenderContext) {
     }
 }

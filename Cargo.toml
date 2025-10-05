@@ -7,10 +7,11 @@ edition = "2021"
 
 [dependencies]
 glam = "0.30.5"
+kurbo = "=0.11.0"
 dotenv = "0.15.0"
-cen = { git = "https://github.com/n-e-l/cen", rev = "dadf4c46361a38bd9c0c26d87b31f1d168cff213" }
+cen = { git = "https://github.com/n-e-l/cen", rev = "92ba9b602ab86933698d7545d80852c74b263d2c" }
 ash = "0.38.0"
 egui = "0.32.0"
 egui_dock = "0.17"
 bytemuck = "1.21.0"
-vsvg = { git = "https://github.com/n-e-l/vsvg" }
+vsvg = "0.5.0"
