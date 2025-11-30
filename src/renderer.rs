@@ -29,7 +29,7 @@ impl DocumentVisitor for DocumentRenderer<'_> {
     fn visit(&self, line: &Line) {
         let start = egui::Pos2::new(line.a.x, line.a.y);
         let end = egui::Pos2::new(line.b.x, line.b.y);
-        let stroke = Stroke::new(2.0, Color32::BLUE);
+        let stroke = Stroke::new(0.5, Color32::WHITE);
         self.painter.line_segment([start, end], stroke);
     }
 }
