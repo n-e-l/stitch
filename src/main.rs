@@ -2,6 +2,8 @@ mod editor;
 mod document;
 mod renderer;
 
+use cen::app::gui::GuiHandler;
+use cen::egui;
 use std::sync::{Arc, Mutex};
 use cen::app::Cen;
 use cen::app::app::AppConfig;
@@ -27,7 +29,7 @@ impl Application {
 }
 
 impl GuiComponent for Application {
-    fn gui(&mut self, gui: &GuiSystem, context: &egui_dock::egui::Context) {
+    fn gui(&mut self, gui: &mut GuiHandler<'_>, context: &cen::egui::Context) {
         self.editor.gui(gui, context);
     }
 }

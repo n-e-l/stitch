@@ -1,6 +1,9 @@
-use egui::{Color32, Painter, Rect, Sense, Stroke, Ui, Vec2};
+use cen::egui::{Color32, Painter, Rect, Sense, Stroke, Ui, Vec2};
 use crate::document::{Document, DocumentVisitor, Line};
 
+/**
+ * A document renderer for egui
+ */
 pub struct DocumentRenderer<'a> {
     painter: Painter,
     document: &'a Document
@@ -27,8 +30,8 @@ impl<'a> DocumentRenderer<'a> {
 
 impl DocumentVisitor for DocumentRenderer<'_> {
     fn visit(&self, line: &Line) {
-        let start = egui::Pos2::new(line.a.x, line.a.y);
-        let end = egui::Pos2::new(line.b.x, line.b.y);
+        let start = cen::egui::Pos2::new(line.a.x, line.a.y);
+        let end = cen::egui::Pos2::new(line.b.x, line.b.y);
         let stroke = Stroke::new(0.5, Color32::WHITE);
         self.painter.line_segment([start, end], stroke);
     }

@@ -9,9 +9,7 @@ edition = "2021"
 glam = "0.30.5"
 kurbo = "=0.11.0"
 dotenv = "0.15.0"
-cen = { git = "https://github.com/n-e-l/cen", rev = "92ba9b602ab86933698d7545d80852c74b263d2c" }
+cen = { git = "https://github.com/n-e-l/cen", rev = "e155bc1a83416ecbe25bd21991f05f7029cc6d9f" }
 ash = "0.38.0"
-egui = "0.32.0"
-egui_dock = "0.17"
 bytemuck = "1.21.0"
 vsvg = "0.5.0"

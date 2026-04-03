@@ -1,13 +1,13 @@
+use cen::app::gui::GuiHandler;
 use std::collections::HashMap;
 use ash::vk::{DescriptorSetLayoutBinding, DescriptorType, PushConstantRange, ShaderStageFlags};
 use bytemuck::{Pod, Zeroable};
 use cen::app::engine::InitContext;
 use cen::app::gui::{GuiComponent, GuiSystem};
-use cen::graphics::Renderer;
 use cen::graphics::renderer::{RenderComponent, RenderContext};
 use cen::vulkan::{ComputePipeline, DescriptorSetLayout};
-use egui::{Rect, Scene, Vec2};
-use egui_dock::{DockArea, DockState, NodeIndex, Style};
+use cen::egui::{Rect, Scene, Vec2};
+use cen::egui_dock::{DockArea, DockState, NodeIndex, Style};
 use crate::document::{Document};
 use crate::renderer::DocumentRenderer;
 
@@ -76,14 +76,14 @@ struct TabViewer {
     document: Document
 }
 
-impl egui_dock::TabViewer for TabViewer {
+impl cen::egui_dock::TabViewer for TabViewer {
     type Tab = String;
 
-    fn title(&mut self, tab: &mut Self::Tab) -> egui::WidgetText {
+    fn title(&mut self, tab: &mut Self::Tab) -> cen::egui_dock::egui::WidgetText {
         (&*tab).into()
     }
 
-    fn ui(&mut self, ui: &mut egui::Ui, tab: &mut Self::Tab) {
+    fn ui(&mut self, ui: &mut cen::egui_dock::egui::Ui, tab: &mut Self::Tab) {
         if tab.as_str() == "view" {
 
             ui.input(|input| {
@@ -95,7 +95,7 @@ impl egui_dock::TabViewer for TabViewer {
                 }
             });
 
-            egui::Frame::group(ui.style())
+            cen::egui::Frame::group(ui.style())
                 .inner_margin(0.0)
                 .show(ui, |ui| {
                     let scene = Scene::new()
@@ -124,7 +124,7 @@ impl egui_dock::TabViewer for TabViewer {
 
 
 impl GuiComponent for Editor {
-    fn gui(&mut self, _: &GuiSystem, context: &egui::Context) {
+    fn gui(&mut self, _: &mut GuiHandler<'_>, context: &cen::egui::Context) {
         DockArea::new(&mut self.tree)
             .style(Style::from_egui(context.style().as_ref()))
             .show(context, &mut self.tab_viewer);
